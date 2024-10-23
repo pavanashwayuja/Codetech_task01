@@ -1,0 +1,104 @@
+/* python program on student tracking system*/
+
+
+
+
+class Student:
+    def __init__(self, name):
+        self.name = name
+        self.grades = {}
+
+    def add_grade(self, subject, grade):
+        if subject in self.grades:
+            self.grades[subject].append(grade)
+        else:
+            self.grades[subject] = [grade]
+
+    def get_average(self):
+        total_grades = sum([sum(grades) for grades in self.grades.values()])
+        total_subjects = sum([len(grades) for grades in self.grades.values()])
+        return total_grades / total_subjects if total_subjects > 0 else 0
+
+    def get_letter_grade(self, average):
+        if average >= 90:
+            return 'A'
+        elif average >= 80:
+            return 'B'
+        elif average >= 70:
+            return 'C'
+        elif average >= 60:
+            return 'D'
+        else:
+            return 'F'
+
+    def display_info(self):
+        average = self.get_average()
+        print(f"Student: {self.name}")
+        for subject, grades in self.grades.items():
+            print(f"{subject}: {grades}")
+        print(f"Average: {average:.2f}, Letter Grade: {self.get_letter_grade(average)}")
+
+
+class GradeTracker:
+    def __init__(self):
+        self.students = {}
+
+    def add_student(self, name):
+        if name not in self.students:
+            self.students[name] = Student(name)
+        else:
+            print(f"Student {name} already exists.")
+
+    def add_grade(self, name, subject, grade):
+        if name in self.students:
+            if not subject.isalpha():  # Check if subject contains only letters
+                print("Error: Subject name should only contain letters.")
+                return
+            try:
+                grade = float(grade)  # Convert grade to float
+                if 0 <= grade <= 100:
+                    self.students[name].add_grade(subject, grade)
+                else:
+                    print("Error: Grade must be between 0 and 100.")
+            except ValueError:
+                print("Error: Grade must be a numeric value.")
+        else:
+            print(f"Student {name} not found. Please add the student first.")
+
+    def display_student(self, name):
+        if name in self.students:
+            self.students[name].display_info()
+        else:
+            print(f"Student {name} not found.")
+
+
+def main():
+    tracker = GradeTracker()
+
+    while True:
+        print("\n1. Add student")
+        print("2. Add grade")
+        print("3. Display student")
+        print("4. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            name = input("Enter student name: ")
+            tracker.add_student(name)
+        elif choice == '2':
+            name = input("Enter student name: ")
+            subject = input("Enter subject: ")
+            grade = input("Enter grade: ")
+            tracker.add_grade(name, subject, grade)
+        elif choice == '3':
+            name = input("Enter student name: ")
+            tracker.display_student(name)
+        elif choice == '4':
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+
+if __name__ == "__main__":
+    main()
